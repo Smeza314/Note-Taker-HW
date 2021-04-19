@@ -1,4 +1,6 @@
-const router = require('express').Router
+const router = require('express').Router()
 
-router.use('/api')
-router.use('/api')
+router.use('/api', require('./noteRoutes'))
+router.use('/api', require('./viewRoutes'))
+
+module.exports = router

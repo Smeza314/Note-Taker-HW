@@ -1,10 +1,10 @@
 const express = require('express')
-const { join } = require('path')
+const path = require('path')
 
 
 const app = express()
 
-app.use(express.static(join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
