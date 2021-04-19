@@ -10,7 +10,7 @@ router.get('/notes', (req, res) => {
 })
 
 router.post('/notes', (req, res) => {
-  let noteId = Date.now() * Math.floor(Math.random() * 50)
+  let noteId = Date.now() * Math.floor(Math.random() * 10)
   fs.readFile(path.join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, db) => {
     if (err) { console.log(err) }
 
