@@ -33,17 +33,8 @@ router.post('/notes', (req, res) => {
 router.delete('notes/:id', (req, res) => {
   let id = req.params.id 
   fs.readFile(path.join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, db) => {
-    if (err) { console.log(err) }
 
-    let noteDB = JSON.parse(db)
-    let newNoteDb = []
-    noteDB.forEach(elem => {
-      if(parseInt(elem.id) !== parseInt(id)) {
-        newNoteDb.push(elem)
-      }
-    })
-
-    fs.writeFile(path.join(__dirname, '..', 'db', 'db.json'), JSON.stringify(newNoteDb), err => {
+    fs.writeFile(path.join(__dirname, '..', 'db', 'db.json'), err => {
       if (err) { console.log(err) }
 
       res.sendStatus(200)
