@@ -1,45 +1,44 @@
 const router = require('express').Router()
+const { v4: uuidv4 } = require('uuid')
+const { join } = require('path')
 const fs = require('fs')
-const path = require('path')
 
 router.get('/notes', (req, res) => {
-  fs.readFile(path.join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, db) => {
+  fs.readFile(join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, notes) => {
     if (err) { console.log(err) }
-    res.json(JSON.parse(db))
+    res.json(JSON.parse(notes))
   })
 })
 
 router.post('/notes', (req, res) => {
-  let noteId = Date.now() * Math.floor(Math.random() * 10)
-  fs.readFile(path.join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, db) => {
+  let note = {
+    id: uuidv4(),
+    ...req.body
+  }
+  fs.readFile(join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, data) => {
     if (err) { console.log(err) }
+    let notes = JSON.parse(data)
+    notes.push(note)
 
-    let newNote = {
-      id: noteId,
-      title: req.body.title,
-      text: req.body.text
-    }
-    let noteDB = JSON.parse(db)
-    noteDB.push(newNote)
-
-    fs.writeFile(path.join(__dirname, '..', 'db', 'db.json'), JSON.stringify(noteDB), err => {
-      if(err) { console.log(err) }
-
-      res.json(req.body)
-    })
-  })    
-})
-
-router.delete('notes/:id', (req, res) => {
-  let id = req.params.id 
-  fs.readFile(path.join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, db) => {
-
-    fs.writeFile(path.join(__dirname, '..', 'db', 'db.json'), err => {
-      if (err) { console.log(err) }
-
-      res.sendStatus(200)
-    })
+    fs.writeFile(join(__dirname, '..', 'db', 'db.json'), JSON.stringify(notes),
+      err => {
+        if (err) { console.log(err) }
+        res.json(note)
+      })
   })
 })
 
+router.delete('/notes/:id', (req, res) => {
+  let id = req.params.id
+  fs.readFile(join(__dirname, '..', 'db', 'db.json'), 'utf8', (err, data) => {
+    if (err) { console.log(err) }
+    let notes = JSON.parse(data)
+    notes = notes.filter(note => note.id !== id)
+    fs.writeFile(join(__dirname, '..', 'db', 'db.json'), JSON.stringify(notes),
+      err => {
+        if (err) { console.log(err) }
+        res.sendStatus(200)
+      })
+  })
+})
 module.exports = router
